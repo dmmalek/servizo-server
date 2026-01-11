@@ -46,6 +46,28 @@ async function run() {
       const result = await serviceCollection.findOne(filter);
       res.send(result);
     });
+    //delete service data using id
+    app.delete("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const deleteServiceData = await serviceCollection.deleteOne(filter);
+      res.send(deleteServiceData);
+    });
+
+    // update service data
+    app.put("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+
+      const updateServiceData = await serviceCollection.updateOne(
+        query,
+        { $set: data },
+        options
+      );
+      res.send(updateServiceData);
+    });
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
